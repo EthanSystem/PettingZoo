@@ -77,7 +77,7 @@ class Agent(Entity):  # properties of agent entities
         self.state = AgentState()
         # action
         self.action = Action()
-        # script behavior to execute
+        # script behavior to execute 要执行的脚本行为
         self.action_callback = None
 
 

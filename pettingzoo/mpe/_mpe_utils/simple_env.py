@@ -81,7 +81,7 @@ class SimpleEnv(AECEnv):
         self.action_spaces = dict()
         self.observation_spaces = dict()
         state_dim = 0
-        for agent in self.world.agents:
+        for agent in self.world.agents: # 遍历每一个agent
             if agent.movable:
                 space_dim = self.world.dim_p * 2 + 1
             elif self.continuous_actions:

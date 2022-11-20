@@ -132,7 +132,7 @@ class World:  # multi-agent world
         for agent in self.agents:
             self.update_agent_state(agent)
 
-    # gather agent action forces
+    # gather agent action forces 收集主体之行动力
     def apply_action_force(self, p_force):
         # set applied forces
         for i, agent in enumerate(self.agents):
@@ -145,7 +145,7 @@ class World:  # multi-agent world
                 p_force[i] = agent.action.u + noise
         return p_force
 
-    # gather physical forces acting on entities
+    # gather physical forces acting on entities 收集物体众之物理力行为
     def apply_environment_force(self, p_force):
         # simple (but inefficient) collision response
         for a, entity_a in enumerate(self.entities):

@@ -145,14 +145,14 @@ class World:  # multi-agent world
                 p_force[i] = agent.action.u + noise
         return p_force
 
-    # gather physical forces acting on entities 收集物体众之物理力行为
+    # gather physical forces acting on entities 遍历每个物体施加环境力
     def apply_environment_force(self, p_force):
         # simple (but inefficient) collision response
         for a, entity_a in enumerate(self.entities):
             for b, entity_b in enumerate(self.entities):
                 if b <= a:
                     continue
-                [f_a, f_b] = self.get_collision_force(entity_a, entity_b)
+                [f_a, f_b] = self.get_collision_force(entity_a, entity_b) # 获取碰撞力
                 if f_a is not None:
                     if p_force[a] is None:
                         p_force[a] = 0.0
@@ -198,7 +198,7 @@ class World:  # multi-agent world
             )
             agent.state.c = agent.action.c + noise
 
-    # get collision forces for any contact between two entities
+    # get collision forces for any contact between two entities 获取两个实体之间的碰撞力
     def get_collision_force(self, entity_a, entity_b):
         if (not entity_a.collide) or (not entity_b.collide):
             return [None, None]  # not a collider

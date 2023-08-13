@@ -1,4 +1,4 @@
-# noqa
+# noqa: D212, D415
 """
 # Emtombed: Cooperative
 
@@ -22,10 +22,6 @@ This environment is part of the <a href='..'>Atari environments</a>. Please read
 | Observation Values   | (0,255)                                                |
 | Average Total Reward | 6.23                                                   |
 
-```{figure} ../../_static/img/aec/atari_entombed_cooperative_aec.svg
-:width: 200px
-:name: entombed_cooperative
-```
 
 Entombed's cooperative version is an exploration game
 where you need to work with your teammate to make it
@@ -87,7 +83,11 @@ In any given turn, an agent can choose from one of 18 actions.
 import os
 from glob import glob
 
-from ..base_atari_env import BaseAtariEnv, base_env_wrapper_fn, parallel_wrapper_fn
+from pettingzoo.atari.base_atari_env import (
+    BaseAtariEnv,
+    base_env_wrapper_fn,
+    parallel_wrapper_fn,
+)
 
 
 def raw_env(**kwargs):

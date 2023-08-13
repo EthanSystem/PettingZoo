@@ -1,4 +1,4 @@
-# noqa
+# noqa: D212, D415
 """
 # Video Checkers
 
@@ -21,10 +21,6 @@ This environment is part of the <a href='..'>Atari environments</a>. Please read
 | Observation Shape    | (210, 160, 3)                                    |
 | Observation Values   | (0,255)                                          |
 
-```{figure} ../../_static/img/aec/atari_video_checkers_aec.svg
-:width: 200px
-:name: video_checkers
-```
 
 A classical strategy game with arcade style controls.
 
@@ -68,7 +64,11 @@ In any given turn, an agent can choose from one of 5 actions.
 import os
 from glob import glob
 
-from ..base_atari_env import BaseAtariEnv, base_env_wrapper_fn, parallel_wrapper_fn
+from pettingzoo.atari.base_atari_env import (
+    BaseAtariEnv,
+    base_env_wrapper_fn,
+    parallel_wrapper_fn,
+)
 
 
 def raw_env(**kwargs):

@@ -1,4 +1,4 @@
-# noqa
+# noqa: D212, D415
 """
 # Texas Hold'em No Limit
 
@@ -21,10 +21,6 @@ This environment is part of the <a href='..'>classic environments</a>. Please re
 | Observation Shape  | (54,)                                                     |
 | Observation Values | [0, 100]                                                  |
 
-```{figure} ../../_static/img/aec/classic_texas_holdem_no_limit_aec.svg
-:width: 200px
-:name: texas_holdem_no_limit
-```
 
 Texas Hold'em No Limit is a variation of Texas Hold'em where there is no limit on the amount of each raise or the number of raises.
 
@@ -92,6 +88,7 @@ whose turn it is. Taking an illegal move ends the game with a reward of -1 for t
 * v0: Initial versions release (1.0.0)
 
 """
+from __future__ import annotations
 
 import os
 
@@ -99,10 +96,10 @@ import gymnasium
 import numpy as np
 import pygame
 from gymnasium import spaces
+from gymnasium.utils import EzPickle
 
+from pettingzoo.classic.rlcard_envs.rlcard_base import RLCardBase
 from pettingzoo.utils import wrappers
-
-from .rlcard_base import RLCardBase
 
 # Pixel art from Mariia Khmelnytska (https://www.123rf.com/photo_104453049_stock-vector-pixel-art-playing-cards-standart-deck-vector-set.html)
 
@@ -131,8 +128,7 @@ def env(**kwargs):
     return env
 
 
-class raw_env(RLCardBase):
-
+class raw_env(RLCardBase, EzPickle):
     metadata = {
         "render_modes": ["human", "rgb_array"],
         "name": "texas_holdem_no_limit_v6",
@@ -140,7 +136,13 @@ class raw_env(RLCardBase):
         "render_fps": 1,
     }
 
-    def __init__(self, num_players=2, render_mode=None):
+    def __init__(
+        self,
+        num_players: int = 2,
+        render_mode: str | None = None,
+        screen_height: int | None = 1000,
+    ):
+        EzPickle.__init__(self, num_players, render_mode, screen_height)
         super().__init__("no-limit-holdem", num_players, (54,))
         self.observation_spaces = self._convert_to_dict(
             [
@@ -156,7 +158,7 @@ class raw_env(RLCardBase):
                                 ),
                                 [100, 100],
                             ),
-                            dtype=np.float64,
+                            dtype=np.float32,
                         ),
                         "action_mask": spaces.Box(
                             low=0, high=1, shape=(self.env.num_actions,), dtype=np.int8
@@ -168,10 +170,20 @@ class raw_env(RLCardBase):
         )
 
         self.render_mode = render_mode
+        self.screen_height = screen_height
+
+        if self.render_mode == "human":
+            self.clock = pygame.time.Clock()
+
+    def step(self, action):
+        super().step(action)
+
+        if self.render_mode == "human":
+            self.render()
 
     def render(self):
         if self.render_mode is None:
-            gymnasium.logger.WARN(
+            gymnasium.logger.warn(
                 "You are calling render method without specifying any render mode."
             )
             return
@@ -194,17 +206,19 @@ class raw_env(RLCardBase):
         def calculate_height(screen_height, divisor, multiplier, tile_size, offset):
             return int(multiplier * screen_height / divisor + tile_size * offset)
 
-        screen_height = 1000
+        screen_height = self.screen_height
         screen_width = int(
             screen_height * (1 / 20)
             + np.ceil(len(self.possible_agents) / 2) * (screen_height * 1 / 2)
         )
 
+        # TODO: refactor this and check if pygame.font init needs to be done
+        # Ideally this should look like all the other environments
         if self.render_mode == "human":
             if self.screen is None:
                 pygame.init()
                 self.screen = pygame.display.set_mode((screen_width, screen_height))
-            pygame.event.get()
+                pygame.display.set_caption("Texas Hold'em No Limit")
         elif self.screen is None:
             pygame.font.init()
             self.screen = pygame.Surface((screen_width, screen_height))

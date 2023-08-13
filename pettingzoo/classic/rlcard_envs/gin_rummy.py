@@ -1,4 +1,4 @@
-# noqa
+# noqa: D212, D415
 """
 # Gin Rummy
 
@@ -21,10 +21,6 @@ This environment is part of the <a href='..'>classic environments</a>. Please re
 | Observation Shape  | (5, 52)                                       |
 | Observation Values | [0,1]                                         |
 
-```{figure} ../../_static/img/aec/classic_gin_rummy_aec.svg
-:width: 200px
-:name: gin_rummy
-```
 
 Gin Rummy is a 2-player card game with a 52 card deck. The objective is to combine 3 or more cards of the same rank or in a sequence of the same suit.
 
@@ -112,6 +108,7 @@ Penalties of `deadwood_count / 100` ensure that the reward never goes below -1.
 * v0: Initial versions release (1.0.0)
 
 """
+from __future__ import annotations
 
 import gymnasium
 import numpy as np
@@ -122,9 +119,8 @@ from rlcard.games.gin_rummy.utils import utils
 from rlcard.games.gin_rummy.utils.action_event import GinAction, KnockAction
 from rlcard.utils.utils import print_card
 
+from pettingzoo.classic.rlcard_envs.rlcard_base import RLCardBase
 from pettingzoo.utils import wrappers
-
-from .rlcard_base import RLCardBase
 
 
 def env(**kwargs):
@@ -142,7 +138,6 @@ def env(**kwargs):
 
 
 class raw_env(RLCardBase, EzPickle):
-
     metadata = {
         "render_modes": ["human"],
         "name": "gin_rummy_v4",
@@ -154,10 +149,15 @@ class raw_env(RLCardBase, EzPickle):
         self,
         knock_reward: float = 0.5,
         gin_reward: float = 1.0,
-        opponents_hand_visible=False,
-        render_mode=None,
+        opponents_hand_visible: bool | None = False,
+        render_mode: str | None = None,
     ):
-        EzPickle.__init__(self, knock_reward, gin_reward, render_mode)
+        EzPickle.__init__(
+            self,
+            knock_reward=knock_reward,
+            gin_reward=gin_reward,
+            render_mode=render_mode,
+        )
         self._opponents_hand_visible = opponents_hand_visible
         num_planes = 5 if self._opponents_hand_visible else 4
         RLCardBase.__init__(self, "gin-rummy", 2, (num_planes, 52))
@@ -202,9 +202,15 @@ class raw_env(RLCardBase, EzPickle):
 
         return {"observation": observation, "action_mask": action_mask}
 
+    def step(self, action):
+        super().step(action)
+
+        if self.render_mode == "human":
+            self.render()
+
     def render(self):
         if self.render_mode is None:
-            gymnasium.logger.WARN(
+            gymnasium.logger.warn(
                 "You are calling render method without specifying any render mode."
             )
             return

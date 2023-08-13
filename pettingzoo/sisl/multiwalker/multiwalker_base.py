@@ -16,7 +16,7 @@ from gymnasium import spaces
 from gymnasium.utils import seeding
 from pygame import gfxdraw
 
-from .._utils import Agent
+from pettingzoo.sisl._utils import Agent
 
 MAX_AGENTS = 40
 
@@ -214,7 +214,6 @@ class BipedalWalker(Agent):
         self.lidar = [LidarCallback() for _ in range(10)]
 
     def apply_action(self, action):
-
         self.joints[0].motorSpeed = float(SPEED_HIP * np.sign(action[0]))
         self.joints[0].maxMotorTorque = float(
             MOTORS_TORQUE * np.clip(np.abs(action[0]), 0, 1)
@@ -288,7 +287,6 @@ class BipedalWalker(Agent):
 
 
 class MultiWalkerEnv:
-
     metadata = {"render_modes": ["human", "rgb_array"], "render_fps": FPS}
 
     hardcore = False
@@ -332,10 +330,9 @@ class MultiWalkerEnv:
         self.remove_on_fall = remove_on_fall
         self.terrain_length = terrain_length
         self.seed_val = None
-        self.seed()
+        self._seed()
         self.setup()
         self.screen = None
-        self.isopen = True
         self.agent_list = list(range(self.n_walkers))
         self.last_rewards = [0 for _ in range(self.n_walkers)]
         self.last_dones = [False for _ in range(self.n_walkers)]
@@ -378,7 +375,7 @@ class MultiWalkerEnv:
     def agents(self):
         return self.walkers
 
-    def seed(self, seed=None):
+    def _seed(self, seed=None):
         self.np_random, seed_ = seeding.np_random(seed)
         self.seed_val = seed_
         for walker in getattr(self, "walkers", []):
@@ -401,7 +398,7 @@ class MultiWalkerEnv:
     def close(self):
         if self.screen is not None:
             pygame.quit()
-            self.isopen = False
+            self.screen = None
 
     def reset(self):
         self.setup()
@@ -562,6 +559,7 @@ class MultiWalkerEnv:
         if self.screen is None:
             pygame.init()
             self.screen = pygame.display.set_mode((VIEWPORT_W, VIEWPORT_H))
+            pygame.display.set_caption("Multiwalker")
 
         self.surf = pygame.Surface(
             (VIEWPORT_W + self.scroll * render_scale + offset, VIEWPORT_H)

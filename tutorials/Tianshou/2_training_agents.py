@@ -12,7 +12,7 @@ git+https://github.com/thu-ml/tianshou
 import os
 from typing import Optional, Tuple
 
-import gym
+import gymnasium
 import numpy as np
 import torch
 from tianshou.data import Collector, VectorReplayBuffer
@@ -33,7 +33,7 @@ def _get_agents(
     env = _get_env()
     observation_space = (
         env.observation_space["observation"]
-        if isinstance(env.observation_space, gym.spaces.Dict)
+        if isinstance(env.observation_space, gymnasium.spaces.Dict)
         else env.observation_space
     )
     if agent_learn is None:
@@ -68,7 +68,6 @@ def _get_env():
 
 
 if __name__ == "__main__":
-
     # ======== Step 1: Environment setup =========
     train_envs = DummyVectorEnv([_get_env for _ in range(10)])
     test_envs = DummyVectorEnv([_get_env for _ in range(10)])
@@ -96,8 +95,8 @@ if __name__ == "__main__":
 
     # ======== Step 4: Callback functions setup =========
     def save_best_fn(policy):
-        model_save_path = os.path.join("log", "rps", "dqn", "policy.pth")
-        os.makedirs(os.path.join("log", "rps", "dqn"), exist_ok=True)
+        model_save_path = os.path.join("log", "ttt", "dqn", "policy.pth")
+        os.makedirs(os.path.join("log", "ttt", "dqn"), exist_ok=True)
         torch.save(policy.policies[agents[1]].state_dict(), model_save_path)
 
     def stop_fn(mean_rewards):

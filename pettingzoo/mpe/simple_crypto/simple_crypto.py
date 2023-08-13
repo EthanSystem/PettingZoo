@@ -1,4 +1,4 @@
-# noqa
+# noqa: D212, D415
 """
 # Simple Crypto
 
@@ -9,7 +9,7 @@
 
 This environment is part of the <a href='..'>MPE environments</a>. Please read that page first for general information.
 
-| Import             | `from pettingzoo.mpe import simple_crypto_v2` |
+| Import             | `from pettingzoo.mpe import simple_crypto_v3` |
 |--------------------|-----------------------------------------------|
 | Actions            | Discrete/Continuous                           |
 | Parallel API       | Yes                                           |
@@ -23,10 +23,6 @@ This environment is part of the <a href='..'>MPE environments</a>. Please read t
 | State Shape        | (20,)                                         |
 | State Values       | (-inf,inf)                                    |
 
-```{figure} ../../_static/img/aec/mpe_simple_crypto_aec.svg
-:width: 200px
-:name: simple_crypto
-```
 
 In this environment, there are 2 good agents (Alice and Bob) and 1 adversary (Eve). Alice must sent a private 1 bit message to Bob over a public channel. Alice and Bob are rewarded +2 if Bob reconstructs the message, but are rewarded -2 if Eve reconstruct the message (that adds to 0 if both teams
 reconstruct the bit). Eve is rewarded -2 based if it cannot reconstruct the signal, zero if it can. Alice and Bob have a private key (randomly generated at beginning of each episode) which they must learn to use to encrypt the message.
@@ -49,7 +45,7 @@ For Bob and Eve, their communication is checked to be the 1 bit of information t
 ### Arguments
 
 ``` python
-simple_crypto_v2.env(max_cycles=25, continuous_actions=False)
+simple_crypto_v3.env(max_cycles=25, continuous_actions=False)
 ```
 
 
@@ -63,11 +59,10 @@ simple_crypto_v2.env(max_cycles=25, continuous_actions=False)
 import numpy as np
 from gymnasium.utils import EzPickle
 
+from pettingzoo.mpe._mpe_utils.core import Agent, Landmark, World
+from pettingzoo.mpe._mpe_utils.scenario import BaseScenario
+from pettingzoo.mpe._mpe_utils.simple_env import SimpleEnv, make_env
 from pettingzoo.utils.conversions import parallel_wrapper_fn
-
-from .._mpe_utils.core import Agent, Landmark, World
-from .._mpe_utils.scenario import BaseScenario
-from .._mpe_utils.simple_env import SimpleEnv, make_env
 
 """Simple crypto environment.
 
@@ -79,17 +74,23 @@ adversary to goal. Adversary is rewarded for its distance to the goal.
 
 class raw_env(SimpleEnv, EzPickle):
     def __init__(self, max_cycles=25, continuous_actions=False, render_mode=None):
-        EzPickle.__init__(self, max_cycles, continuous_actions, render_mode)
+        EzPickle.__init__(
+            self,
+            max_cycles=max_cycles,
+            continuous_actions=continuous_actions,
+            render_mode=render_mode,
+        )
         scenario = Scenario()
         world = scenario.make_world()
-        super().__init__(
+        SimpleEnv.__init__(
+            self,
             scenario=scenario,
             world=world,
             render_mode=render_mode,
             max_cycles=max_cycles,
             continuous_actions=continuous_actions,
         )
-        self.metadata["name"] = "simple_crypto_v2"
+        self.metadata["name"] = "simple_crypto_v3"
 
 
 env = make_env(raw_env)

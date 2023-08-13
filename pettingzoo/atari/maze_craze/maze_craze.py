@@ -1,4 +1,4 @@
-# noqa
+# noqa: D212, D415
 """
 # Maze Craze
 
@@ -21,10 +21,6 @@ This environment is part of the <a href='..'>Atari environments</a>. Please read
 | Observation Shape    | (250, 160, 3)                                |
 | Observation Values   | (0,255)                                      |
 
-```{figure} ../../_static/img/aec/atari_maze_craze_aec.svg
-:width: 200px
-:name: maze_craze
-```
 
 A competitive game of memory and planning!
 
@@ -92,7 +88,11 @@ import os
 import warnings
 from glob import glob
 
-from ..base_atari_env import BaseAtariEnv, base_env_wrapper_fn, parallel_wrapper_fn
+from pettingzoo.atari.base_atari_env import (
+    BaseAtariEnv,
+    base_env_wrapper_fn,
+    parallel_wrapper_fn,
+)
 
 avaliable_versions = {
     "robbers": 2,

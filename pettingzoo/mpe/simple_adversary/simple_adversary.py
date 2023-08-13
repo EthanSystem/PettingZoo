@@ -1,4 +1,4 @@
-# noqa
+# noqa: D212, D415
 """
 # Simple Adversary
 
@@ -9,7 +9,7 @@
 
 This environment is part of the <a href='..'>MPE environments</a>. Please read that page first for general information.
 
-| Import             | `from pettingzoo.mpe import simple_adversary_v2` |
+| Import             | `from pettingzoo.mpe import simple_adversary_v3` |
 |--------------------|--------------------------------------------------|
 | Actions            | Discrete/Continuous                              |
 | Parallel API       | Yes                                              |
@@ -23,10 +23,6 @@ This environment is part of the <a href='..'>MPE environments</a>. Please read t
 | State Shape        | (28,)                                            |
 | State Values       | (-inf,inf)                                       |
 
-```{figure} ../../_static/img/aec/mpe_simple_adversary_aec.svg
-:width: 200px
-:name: simple_adversary
-```
 
 In this environment, there is 1 adversary (red), N good agents (green), N landmarks (default N=2). All agents observe the position of landmarks and other agents. One landmark is the 'target landmark' (colored green). Good agents are rewarded based on how close the closest one of them is to the
 target landmark, but negatively rewarded based on how close the adversary is to the target landmark. The adversary is rewarded based on distance to the target, but it doesn't know which landmark is the target landmark. All rewards are unscaled Euclidean distance (see main MPE documentation for
@@ -43,7 +39,7 @@ Adversary action space: `[no_action, move_left, move_right, move_down, move_up]`
 ### Arguments
 
 ``` python
-simple_adversary_v2.env(N=2, max_cycles=25, continuous_actions=False)
+simple_adversary_v3.env(N=2, max_cycles=25, continuous_actions=False)
 ```
 
 
@@ -59,26 +55,32 @@ simple_adversary_v2.env(N=2, max_cycles=25, continuous_actions=False)
 import numpy as np
 from gymnasium.utils import EzPickle
 
+from pettingzoo.mpe._mpe_utils.core import Agent, Landmark, World
+from pettingzoo.mpe._mpe_utils.scenario import BaseScenario
+from pettingzoo.mpe._mpe_utils.simple_env import SimpleEnv, make_env
 from pettingzoo.utils.conversions import parallel_wrapper_fn
-
-from .._mpe_utils.core import Agent, Landmark, World
-from .._mpe_utils.scenario import BaseScenario
-from .._mpe_utils.simple_env import SimpleEnv, make_env
 
 
 class raw_env(SimpleEnv, EzPickle):
     def __init__(self, N=2, max_cycles=25, continuous_actions=False, render_mode=None):
-        EzPickle.__init__(self, N, max_cycles, continuous_actions, render_mode)
+        EzPickle.__init__(
+            self,
+            N=N,
+            max_cycles=max_cycles,
+            continuous_actions=continuous_actions,
+            render_mode=render_mode,
+        )
         scenario = Scenario()
         world = scenario.make_world(N)
-        super().__init__(
+        SimpleEnv.__init__(
+            self,
             scenario=scenario,
             world=world,
             render_mode=render_mode,
             max_cycles=max_cycles,
             continuous_actions=continuous_actions,
         )
-        self.metadata["name"] = "simple_adversary_v2"
+        self.metadata["name"] = "simple_adversary_v3"
 
 
 env = make_env(raw_env)

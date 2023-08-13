@@ -1,4 +1,4 @@
-# noqa
+# noqa: D212, D415
 """
 # Combat: Plane
 
@@ -21,10 +21,6 @@ This environment is part of the <a href='..'>Atari environments</a>. Please read
 | Observation Shape  | (256, 160, 3)                                |
 | Observation Values | (0,255)                                      |
 
-```{figure} ../../_static/img/aec/atari_combat_plane_aec.svg
-:width: 200px
-:name: combat_plane
-```
 
 *Combat*'s plane mode is an adversarial game where timing,
 positioning, and keeping track of your opponent's complex
@@ -92,7 +88,11 @@ In any given turn, an agent can choose from one of 18 actions.
 import os
 from glob import glob
 
-from ..base_atari_env import BaseAtariEnv, base_env_wrapper_fn, parallel_wrapper_fn
+from pettingzoo.atari.base_atari_env import (
+    BaseAtariEnv,
+    base_env_wrapper_fn,
+    parallel_wrapper_fn,
+)
 
 avaliable_versions = {
     "bi-plane": 15,

@@ -1,4 +1,4 @@
-# noqa
+# noqa: D212, D415
 """
 # Space Invaders
 
@@ -21,10 +21,6 @@ This environment is part of the <a href='..'>Atari environments</a>. Please read
 | Observation Shape    | (210, 160, 3)                                    |
 | Observation Values   | (0,255)                                          |
 
-```{figure} ../../_static/img/aec/atari_space_invaders_aec.svg
-:width: 200px
-:name: space_invaders
-```
 
 Classic Atari game, but there are two ships controlled by two players that are each trying to maximize their score.
 
@@ -82,7 +78,11 @@ In any given turn, an agent can choose from one of 6 actions.
 import os
 from glob import glob
 
-from ..base_atari_env import BaseAtariEnv, base_env_wrapper_fn, parallel_wrapper_fn
+from pettingzoo.atari.base_atari_env import (
+    BaseAtariEnv,
+    base_env_wrapper_fn,
+    parallel_wrapper_fn,
+)
 
 
 def raw_env(
@@ -91,7 +91,7 @@ def raw_env(
     zigzaging_bombs=False,
     fast_bomb=False,
     invisible_invaders=False,
-    **kwargs
+    **kwargs,
 ):
     mode = 33 + (
         moving_shields * 1

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import warnings
-from typing import Any, Dict, Iterable, Iterator, List, Optional, Tuple, TypeVar
+from typing import Any, Dict, Iterable, Iterator, TypeVar
 
 import gymnasium.spaces
 import numpy as np
@@ -29,26 +29,26 @@ class AECEnv:
     the `api_test` documented in the Developer documentation on the website.
     """
 
-    metadata: Dict[str, Any]  # Metadata for the environment
+    metadata: dict[str, Any]  # Metadata for the environment
 
     # All agents that may appear in the environment
-    possible_agents: List[AgentID]
-    agents: List[AgentID]  # Agents active at any given time
+    possible_agents: list[AgentID]
+    agents: list[AgentID]  # Agents active at any given time
 
-    observation_spaces: Dict[
+    observation_spaces: dict[
         AgentID, gymnasium.spaces.Space
     ]  # Observation space for each agent
     # Action space for each agent
-    action_spaces: Dict[AgentID, gymnasium.spaces.Space]
+    action_spaces: dict[AgentID, gymnasium.spaces.Space]
 
     # Whether each agent has just reached a terminal state
-    terminations: Dict[AgentID, bool]
-    truncations: Dict[AgentID, bool]
-    rewards: Dict[AgentID, float]  # Reward from the last step for each agent
+    terminations: dict[AgentID, bool]
+    truncations: dict[AgentID, bool]
+    rewards: dict[AgentID, float]  # Reward from the last step for each agent
     # Cumulative rewards for each agent
-    _cumulative_rewards: Dict[AgentID, float]
-    infos: Dict[
-        AgentID, Dict[str, Any]
+    _cumulative_rewards: dict[AgentID, float]
+    infos: dict[
+        AgentID, dict[str, Any]
     ]  # Additional information from the last step for each agent
 
     agent_selection: AgentID  # The agent currently being stepped
@@ -65,21 +65,14 @@ class AECEnv:
 
     def reset(
         self,
-        seed: Optional[int] = None,
-        return_info: bool = False,
-        options: Optional[dict] = None,
+        seed: int | None = None,
+        options: dict | None = None,
     ) -> None:
         """Resets the environment to a starting state."""
         raise NotImplementedError
 
-    def seed(self, seed: Optional[int] = None) -> None:
-        """Reseeds the environment (making the resulting environment deterministic)."""
-        raise NotImplementedError(
-            "Calling seed externally is deprecated; call reset(seed=seed) instead"
-        )
-
     # TODO: Remove `Optional` type below
-    def observe(self, agent: str) -> Optional[ObsType]:
+    def observe(self, agent: str) -> ObsType | None:
         """Returns the observation an agent currently can make.
 
         `last()` calls this function.
@@ -184,7 +177,7 @@ class AECEnv:
 
     def last(
         self, observe: bool = True
-    ) -> Tuple[Optional[ObsType], float, bool, bool, Dict[str, Any]]:
+    ) -> tuple[ObsType | None, float, bool, bool, dict[AgentID, dict[str, Any]]]:
         """Returns observation, cumulative reward, terminated, truncated, info for the current agent (specified by self.agent_selection)."""
         agent = self.agent_selection
         assert agent
@@ -269,7 +262,7 @@ class AECIterable(Iterable):
 
 
 class AECIterator(Iterator):
-    def __init__(self, env, max_iter):
+    def __init__(self, env: AECEnv, max_iter: int):
         self.env = env
         self.iters_til_term = max_iter
 
@@ -279,7 +272,7 @@ class AECIterator(Iterator):
         self.iters_til_term -= 1
         return self.env.agent_selection
 
-    def __iter__(self):
+    def __iter__(self) -> AECIterator:
         return self
 
 
@@ -291,37 +284,30 @@ class ParallelEnv:
     the Developer documentation on the website.
     """
 
-    metadata: Dict[str, Any]
+    metadata: dict[str, Any]
 
-    agents: List[AgentID]
-    possible_agents: List[AgentID]
-    observation_spaces: Dict[
+    agents: list[AgentID]
+    possible_agents: list[AgentID]
+    observation_spaces: dict[
         AgentID, gymnasium.spaces.Space
     ]  # Observation space for each agent
-    action_spaces: Dict[AgentID, gymnasium.spaces.Space]
+    action_spaces: dict[AgentID, gymnasium.spaces.Space]
 
     def reset(
         self,
-        seed: Optional[int] = None,
-        return_info: bool = False,
-        options: Optional[dict] = None,
-    ) -> ObsDict:
+        seed: int | None = None,
+        options: dict | None = None,
+    ) -> tuple[ObsDict, dict[str, dict]]:
         """Resets the environment.
 
         And returns a dictionary of observations (keyed by the agent name)
         """
         raise NotImplementedError
 
-    def seed(self, seed=None):
-        """Reseeds the environment (making it deterministic)."""
-        raise NotImplementedError(
-            "Calling seed externally is deprecated; call reset(seed=seed) instead"
-        )
-
     def step(
         self, actions: ActionDict
-    ) -> Tuple[
-        ObsDict, Dict[str, float], Dict[str, bool], Dict[str, bool], Dict[str, dict]
+    ) -> tuple[
+        ObsDict, dict[str, float], dict[str, bool], dict[str, bool], dict[str, dict]
     ]:
         """Receives a dictionary of actions keyed by the agent name.
 
@@ -330,7 +316,7 @@ class ParallelEnv:
         """
         raise NotImplementedError
 
-    def render(self) -> None | np.ndarray | str | List:
+    def render(self) -> None | np.ndarray | str | list:
         """Displays a rendered frame from the environment, if supported.
 
         Alternate render modes in the default environments are `'rgb_array'`

@@ -1,4 +1,4 @@
-# noqa
+# noqa: D212, D415
 """
 # Pistonball
 
@@ -23,10 +23,6 @@ This environment is part of the <a href='..'>butterfly environments</a>. Please 
 | State Shape          | (560, 880, 3)                                        |
 | State Values         | (0, 255)                                             |
 
-```{figure} ../../_static/img/aec/butterfly_pistonball_aec.svg
-:width: 200px
-:name: pistonball
-```
 
 This is a simple physics based cooperative game where the goal is to move the ball to the left wall of the game border by activating the vertically moving pistons. Each piston agent's observation is an RGB image of the two pistons (or the wall) next to the agent and the space above them. Every
 piston can be acted on in any given time. The action space in discrete mode is 0 to move down, 1 to stay still, and 2 to move up. In continuous mode, the value in the range [-1, 1] is proportional to the amount that the pistons are raised or lowered by. Continuous actions are scaled by a factor
@@ -92,14 +88,15 @@ import pymunk.pygame_util
 from gymnasium.utils import EzPickle, seeding
 
 from pettingzoo import AECEnv
+from pettingzoo.butterfly.pistonball.manual_policy import ManualPolicy
 from pettingzoo.utils import agent_selector, wrappers
 from pettingzoo.utils.conversions import parallel_wrapper_fn
-
-from .manual_policy import ManualPolicy  # noqa: F401
 
 _image_library = {}
 
 FPS = 20
+
+__all__ = ["ManualPolicy", "env", "parallel_env", "raw_env"]
 
 
 def get_image(path):
@@ -126,7 +123,6 @@ parallel_env = parallel_wrapper_fn(env)
 
 
 class raw_env(AECEnv, EzPickle):
-
     metadata = {
         "render_modes": ["human", "rgb_array"],
         "name": "pistonball_v6",
@@ -150,16 +146,16 @@ class raw_env(AECEnv, EzPickle):
     ):
         EzPickle.__init__(
             self,
-            n_pistons,
-            time_penalty,
-            continuous,
-            random_drop,
-            random_rotate,
-            ball_mass,
-            ball_friction,
-            ball_elasticity,
-            max_cycles,
-            render_mode,
+            n_pistons=n_pistons,
+            time_penalty=time_penalty,
+            continuous=continuous,
+            random_drop=random_drop,
+            random_rotate=random_rotate,
+            ball_mass=ball_mass,
+            ball_friction=ball_friction,
+            ball_elasticity=ball_elasticity,
+            max_cycles=max_cycles,
+            render_mode=render_mode,
         )
         self.dt = 1.0 / FPS
         self.n_pistons = n_pistons
@@ -275,9 +271,7 @@ class raw_env(AECEnv, EzPickle):
 
         self.frames = 0
 
-        self.has_reset = False
-        self.closed = False
-        self.seed()
+        self._seed()
 
     def observation_space(self, agent):
         return self.observation_spaces[agent]
@@ -285,7 +279,7 @@ class raw_env(AECEnv, EzPickle):
     def action_space(self, agent):
         return self.action_spaces[agent]
 
-    def seed(self, seed=None):
+    def _seed(self, seed=None):
         self.np_random, seed = seeding.np_random(seed)
 
     def observe(self, agent):
@@ -310,6 +304,7 @@ class raw_env(AECEnv, EzPickle):
 
     def enable_render(self):
         self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
+        pygame.display.set_caption("Pistonball")
 
         self.renderOn = True
         # self.screen.blit(self.background, (0, 0))
@@ -317,13 +312,9 @@ class raw_env(AECEnv, EzPickle):
         self.draw()
 
     def close(self):
-        if not self.closed:
-            self.closed = True
-            if self.renderOn:
-                self.screen = pygame.Surface((self.screen_width, self.screen_height))
-                self.renderOn = False
-                pygame.event.pump()
-                pygame.display.quit()
+        if self.screen is not None:
+            pygame.quit()
+            self.screen = None
 
     def add_walls(self):
         top_left = (self.wall_width, self.wall_width)
@@ -396,9 +387,9 @@ class raw_env(AECEnv, EzPickle):
             cap(piston.position[1] - v * self.pixels_per_position),
         )
 
-    def reset(self, seed=None, return_info=False, options=None):
+    def reset(self, seed=None, options=None):
         if seed is not None:
-            self.seed(seed)
+            self._seed(seed)
         self.space = pymunk.Space(threaded=False)
         self.add_walls()
         # self.space.threads = 2
@@ -483,7 +474,6 @@ class raw_env(AECEnv, EzPickle):
         self._agent_selector.reinit(self.agents)
         self.agent_selection = self._agent_selector.next()
 
-        self.has_reset = True
         self.terminate = False
         self.truncate = False
         self.rewards = dict(zip(self.agents, [0 for _ in self.agents]))
@@ -541,6 +531,8 @@ class raw_env(AECEnv, EzPickle):
             x_pos += self.piston_width
 
     def draw(self):
+        if self.render_mode is None:
+            return
         # redraw the background image if ball goes outside valid position
         if not self.valid_ball_position_rect.collidepoint(self.ball.position):
             # self.screen.blit(self.background, (0, 0))
@@ -597,7 +589,7 @@ class raw_env(AECEnv, EzPickle):
 
     def render(self):
         if self.render_mode is None:
-            gymnasium.logger.WARN(
+            gymnasium.logger.warn(
                 "You are calling render method without specifying any render mode."
             )
             return

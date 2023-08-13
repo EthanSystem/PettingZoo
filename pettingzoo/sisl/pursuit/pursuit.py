@@ -1,4 +1,4 @@
-# noqa
+# noqa: D212, D415
 """
 # Pursuit
 
@@ -21,10 +21,6 @@ This environment is part of the <a href='..'>SISL environments</a>. Please read 
 | Observation Shape    | (7, 7, 3)                                              |
 | Observation Values   | [0, 30]                                                |
 
-```{figure} ../../_static/img/aec/sisl_pursuit_aec.svg
-:width: 200px
-:name: pursuit
-```
 
 By default 30 blue evader agents and 8 red pursuer agents are placed in a 16 x 16 grid with an obstacle, shown in white, in the center. The evaders move randomly, and the pursuers are controlled. Every time the pursuers fully surround an evader each of the surrounding agents receives a reward of 5
 and the evader is removed from the environment. Pursuers also receive a reward of 0.01 every time they touch an evader. The pursuers have a discrete action space of up, down, left, right and stay. Each pursuer observes a 7 x 7 grid centered around itself, depicted by the orange boxes surrounding
@@ -87,11 +83,12 @@ import pygame
 from gymnasium.utils import EzPickle
 
 from pettingzoo import AECEnv
+from pettingzoo.sisl.pursuit.manual_policy import ManualPolicy
+from pettingzoo.sisl.pursuit.pursuit_base import Pursuit as _env
 from pettingzoo.utils import agent_selector, wrappers
 from pettingzoo.utils.conversions import parallel_wrapper_fn
 
-from .manual_policy import ManualPolicy  # noqa: F401
-from .pursuit_base import Pursuit as _env
+__all__ = ["ManualPolicy", "env", "parallel_env", "raw_env"]
 
 
 def env(**kwargs):
@@ -105,7 +102,6 @@ parallel_env = parallel_wrapper_fn(env)
 
 
 class raw_env(AECEnv, EzPickle):
-
     metadata = {
         "render_modes": ["human", "rgb_array"],
         "name": "pursuit_v4",
@@ -130,12 +126,9 @@ class raw_env(AECEnv, EzPickle):
         self.steps = 0
         self.closed = False
 
-    def seed(self, seed=None):
-        self.env.seed(seed)
-
-    def reset(self, seed=None, return_info=False, options=None):
+    def reset(self, seed=None, options=None):
         if seed is not None:
-            self.seed(seed=seed)
+            self.env._seed(seed=seed)
         self.steps = 0
         self.agents = self.possible_agents[:]
         self.rewards = dict(zip(self.agents, [(0) for _ in self.agents]))
@@ -179,6 +172,9 @@ class raw_env(AECEnv, EzPickle):
         self._cumulative_rewards[self.agent_selection] = 0
         self.agent_selection = self._agent_selector.next()
         self._accumulate_rewards()
+
+        if self.render_mode == "human":
+            self.render()
 
     def observe(self, agent):
         o = self.env.safely_observe(self.agent_name_mapping[agent])

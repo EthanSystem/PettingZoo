@@ -1,4 +1,4 @@
-# noqa
+# noqa: D212, D415
 """
 # Tic Tac Toe
 
@@ -21,10 +21,6 @@ This environment is part of the <a href='..'>classic environments</a>. Please re
 | Observation Shape  | (3, 3, 2)                                     |
 | Observation Values | [0,1]                                         |
 
-```{figure} ../../_static/img/aec/classic_tictactoe_aec.svg
-:width: 200px
-:name: tictactoe
-```
 
 Tic-tac-toe is a simple turn based strategy game where 2 players, X and O, take turns marking spaces on a 3 x 3 grid. The first player to place 3 of their marks in a horizontal, vertical, or diagonal line is the winner.
 
@@ -78,9 +74,8 @@ import numpy as np
 from gymnasium import spaces
 
 from pettingzoo import AECEnv
+from pettingzoo.classic.tictactoe.board import Board
 from pettingzoo.utils import agent_selector, wrappers
-
-from .board import Board
 
 
 def env(render_mode=None):
@@ -211,7 +206,7 @@ class raw_env(AECEnv):
         if self.render_mode == "human":
             self.render()
 
-    def reset(self, seed=None, return_info=False, options=None):
+    def reset(self, seed=None, options=None):
         # reset environment
         self.board = Board()
 
@@ -228,7 +223,7 @@ class raw_env(AECEnv):
 
     def render(self):
         if self.render_mode is None:
-            gymnasium.logger.WARN(
+            gymnasium.logger.warn(
                 "You are calling render method without specifying any render mode."
             )
             return

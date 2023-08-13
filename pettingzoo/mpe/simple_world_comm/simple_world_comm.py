@@ -1,4 +1,4 @@
-# noqa
+# noqa: D212, D415
 """
 # Simple World Comm
 
@@ -9,7 +9,7 @@
 
 This environment is part of the <a href='..'>MPE environments</a>. Please read that page first for general information.
 
-| Import             | `from pettingzoo.mpe import simple_world_comm_v2`                                   |
+| Import             | `from pettingzoo.mpe import simple_world_comm_v3`                                   |
 |--------------------|-------------------------------------------------------------------------------------|
 | Actions            | Discrete/Continuous                                                                 |
 | Parallel API       | Yes                                                                                 |
@@ -23,10 +23,6 @@ This environment is part of the <a href='..'>MPE environments</a>. Please read t
 | State Shape        | (192,)                                                                              |
 | State Values       | (-inf,inf)                                                                          |
 
-```{figure} ../../_static/img/aec/mpe_simple_world_comm_aec.svg
-:width: 200px
-:name: simple_world_comm
-```
 
 This environment is similar to simple_tag, except there is food (small blue balls) that the good agents are rewarded for being near, there are 'forests' that hide agents inside from being seen, and there is a 'leader adversary' that can see the agents at all times and can communicate with the
 other adversaries to help coordinate the chase. By default, there are 2 good agents, 3 adversaries, 1 obstacles, 2 foods, and 2 forests.
@@ -80,11 +76,10 @@ simple_world_comm.env(num_good=2, num_adversaries=4, num_obstacles=1,
 import numpy as np
 from gymnasium.utils import EzPickle
 
+from pettingzoo.mpe._mpe_utils.core import Agent, Landmark, World
+from pettingzoo.mpe._mpe_utils.scenario import BaseScenario
+from pettingzoo.mpe._mpe_utils.simple_env import SimpleEnv, make_env
 from pettingzoo.utils.conversions import parallel_wrapper_fn
-
-from .._mpe_utils.core import Agent, Landmark, World
-from .._mpe_utils.scenario import BaseScenario
-from .._mpe_utils.simple_env import SimpleEnv, make_env
 
 
 class raw_env(SimpleEnv, EzPickle):
@@ -101,26 +96,28 @@ class raw_env(SimpleEnv, EzPickle):
     ):
         EzPickle.__init__(
             self,
-            num_good,
-            num_adversaries,
-            num_obstacles,
-            max_cycles,
-            num_forests,
-            continuous_actions,
-            render_mode,
+            num_good=num_good,
+            num_adversaries=num_adversaries,
+            num_obstacles=num_obstacles,
+            num_food=num_food,
+            max_cycles=max_cycles,
+            num_forests=num_forests,
+            continuous_actions=continuous_actions,
+            render_mode=render_mode,
         )
         scenario = Scenario()
         world = scenario.make_world(
             num_good, num_adversaries, num_obstacles, num_food, num_forests
         )
-        super().__init__(
+        SimpleEnv.__init__(
+            self,
             scenario=scenario,
             world=world,
             render_mode=render_mode,
             max_cycles=max_cycles,
             continuous_actions=continuous_actions,
         )
-        self.metadata["name"] = "simple_world_comm_v2"
+        self.metadata["name"] = "simple_world_comm_v3"
 
 
 env = make_env(raw_env)

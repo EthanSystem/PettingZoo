@@ -59,7 +59,7 @@ class SimpleEnv(AECEnv):
         # Set up the drawing window
 
         self.renderOn = False
-        self.seed()
+        self._seed()
 
         self.max_cycles = max_cycles
         self.scenario = scenario
@@ -126,7 +126,7 @@ class SimpleEnv(AECEnv):
     def action_space(self, agent):
         return self.action_spaces[agent]
 
-    def seed(self, seed=None):
+    def _seed(self, seed=None):
         self.np_random, seed = seeding.np_random(seed)
 
     def observe(self, agent):
@@ -143,9 +143,9 @@ class SimpleEnv(AECEnv):
         )
         return np.concatenate(states, axis=None)
 
-    def reset(self, seed=None, return_info=False, options=None):
+    def reset(self, seed=None, options=None):
         if seed is not None:
-            self.seed(seed=seed)
+            self._seed(seed=seed)
         self.scenario.reset_world(self.world, self.np_random)
 
         self.agents = self.possible_agents[:]
@@ -269,22 +269,20 @@ class SimpleEnv(AECEnv):
 
     def render(self):
         if self.render_mode is None:
-            gymnasium.logger.WARN(
+            gymnasium.logger.warn(
                 "You are calling render method without specifying any render mode."
             )
             return
 
         self.enable_render(self.render_mode)
 
-        observation = np.array(pygame.surfarray.pixels3d(self.screen))
-        if self.render_mode == "human":
-            self.draw()
+        self.draw()
+        if self.render_mode == "rgb_array":
+            observation = np.array(pygame.surfarray.pixels3d(self.screen))
+            return np.transpose(observation, axes=(1, 0, 2))
+        elif self.render_mode == "human":
             pygame.display.flip()
-        return (
-            np.transpose(observation, axes=(1, 0, 2))
-            if self.render_mode == "rgb_array"
-            else None
-        )
+            return
 
     def draw(self):
         # clear screen
@@ -340,7 +338,6 @@ class SimpleEnv(AECEnv):
                 text_line += 1
 
     def close(self):
-        if self.renderOn:
-            pygame.event.pump()
-            pygame.display.quit()
-            self.renderOn = False
+        if self.screen is not None:
+            pygame.quit()
+            self.screen = None

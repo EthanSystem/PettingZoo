@@ -1,4 +1,4 @@
-# noqa
+# noqa: D212, D415
 """
 # Leduc Hold'em
 
@@ -21,10 +21,6 @@ This environment is part of the <a href='..'>classic environments</a>. Please re
 | Observation Shape  | (36,)                                            |
 | Observation Values | [0, 1]                                           |
 
-```{figure} ../../_static/img/aec/classic_leduc_holdem_aec.svg
-:width: 200px
-:name: leduc_holdem
-```
 
 Leduc Hold'em is a variation of Limit Texas Hold'em with 2 players, 2 rounds and a deck of six cards (Jack, Queen, and King in 2 suits). At the beginning of the game, each player receives one card and, after betting, one public card is revealed. Another round follow. At the end, the player with
 the best hand wins and receives a reward (+1) and the loser receives -1. At any time, any player can fold.
@@ -84,13 +80,13 @@ whose turn it is. Taking an illegal move ends the game with a reward of -1 for t
 * v0: Initial versions release (1.0.0)
 
 """
+from __future__ import annotations
 
 import gymnasium
 from rlcard.utils.utils import print_card
 
+from pettingzoo.classic.rlcard_envs.rlcard_base import RLCardBase
 from pettingzoo.utils import wrappers
-
-from .rlcard_base import RLCardBase
 
 
 def env(**kwargs):
@@ -108,7 +104,6 @@ def env(**kwargs):
 
 
 class raw_env(RLCardBase):
-
     metadata = {
         "render_modes": ["human"],
         "name": "leduc_holdem_v4",
@@ -116,13 +111,23 @@ class raw_env(RLCardBase):
         "render_fps": 1,
     }
 
-    def __init__(self, num_players=2, render_mode=None):
+    def __init__(
+        self,
+        num_players: int = 2,
+        render_mode: str | None = None,
+    ):
         super().__init__("leduc-holdem", num_players, (36,))
         self.render_mode = render_mode
 
+    def step(self, action):
+        super().step(action)
+
+        if self.render_mode == "human":
+            self.render()
+
     def render(self):
         if self.render_mode is None:
-            gymnasium.logger.WARN(
+            gymnasium.logger.warn(
                 "You are calling render method without specifying any render mode."
             )
             return

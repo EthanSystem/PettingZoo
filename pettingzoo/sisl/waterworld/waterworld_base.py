@@ -8,7 +8,12 @@ from gymnasium import spaces
 from gymnasium.utils import seeding
 from scipy.spatial import distance as ssd
 
-from .waterworld_models import Evaders, Obstacle, Poisons, Pursuers
+from pettingzoo.sisl.waterworld.waterworld_models import (
+    Evaders,
+    Obstacle,
+    Poisons,
+    Pursuers,
+)
 
 FPS = 15
 
@@ -26,7 +31,7 @@ class WaterworldBase:
         radius=0.015,
         obstacle_radius=0.1,
         obstacle_coord=[(0.5, 0.5)],
-        pursuer_max_accel=0.02,
+        pursuer_max_accel=0.5,
         pursuer_speed=0.2,
         evader_speed=0.1,
         poison_speed=0.1,
@@ -42,26 +47,26 @@ class WaterworldBase:
     ):
         """Input keyword arguments.
 
-        n_pursuers: number of pursuing archea (agents)
-        n_evaders: number of evader archea (food)
-        n_poisons: number of poison archea
+        n_pursuers: number of agents
+        n_evaders: number of food particles present
+        n_poisons: number of poisons present
         n_obstacles: number of obstacles
-        n_coop: number of pursuing archea (agents) that must be touching food at the same time to consume it
-        n_sensors: number of sensors on each of the pursuing archea (agents)
-        sensor_range: length of sensor dendrite on all pursuing archea (agents)
-        radius: archea base radius. Pursuer: radius, evader: 2 x radius, poison: 3/4 x radius
-        obstacle_radius: radius of obstacle object
-        pursuer_speed: pursuing archea speed
-        evader_speed: evading archea speed
-        poison_speed: poison archea speed
-        obstacle_coord: list of coordinate of obstacle object. Can be set to `None` to use a random location
-        speed_features: toggles whether pursuing archea (agent) sensors detect speed of other archea
-        pursuer_max_accel: pursuer archea maximum acceleration (maximum action size)
-        thrust_penalty: scaling factor for the negative reward used to penalize large actions
+        n_coop: number of agents required to capture a food particle
+        n_sensors: number of sensors on each agent
+        sensor_range: range of the sensor
+        radius: radius of the agent
+        obstacle_radius: radius of the obstacle
+        obstacle_coord: coordinates of the obstacles, this is an [n_obstacles, 2] array with values >0, <1
+        pursuer_max_accel: maximum acceleration of the agents
+        pursuer_speed: maximum speed of the agents
+        evader_speed: maximum speed of the food particles
+        poison_speed: maximum speed of the poison particles
+        poison_reward: reward (or penalty) for getting a poison particle
+        food_reward: reward for getting a food particle
+        encounter_reward: reward for being in the presence of food
+        thrust_penalty: scaling factor for the negative reard used to penalize large actions
         local_ratio: proportion of reward allocated locally vs distributed globally among all agents
-        food_reward: reward for pursuers consuming an evading archea
-        poison_reward: reward for pursuer consuming a poison object (typically negative)
-        encounter_reward: reward for a pursuer colliding with an evading archea
+        speed_features: whether to include entity speed in the state space
         """
         self.pixel_scale = 30 * 25
         self.clock = pygame.time.Clock()
@@ -94,7 +99,6 @@ class WaterworldBase:
         self.thrust_penalty = thrust_penalty
 
         self.max_cycles = max_cycles
-        self.renderOn = False
 
         self.control_rewards = [0 for _ in range(self.n_pursuers)]
         self.behavior_rewards = [0 for _ in range(self.n_pursuers)]
@@ -109,11 +113,11 @@ class WaterworldBase:
             self.initial_obstacle_coord = obstacle_coord
 
         self.render_mode = render_mode
-        self.renderOn = False
+        self.screen = None
         self.frames = 0
         self.num_agents = self.n_pursuers
         self.get_spaces()
-        self.seed()
+        self._seed()
 
     def get_spaces(self):
         """Define the action and observation spaces for all of the agents."""
@@ -139,7 +143,7 @@ class WaterworldBase:
         self.observation_space = [obs_space for i in range(self.n_pursuers)]
         self.action_space = [act_space for i in range(self.n_pursuers)]
 
-    def seed(self, seed=None):
+    def _seed(self, seed=None):
         self.np_random, seed = seeding.np_random(seed)
         return [seed]
 
@@ -212,9 +216,9 @@ class WaterworldBase:
             )
 
     def close(self):
-        if self.renderOn:
-            pygame.display.quit()
+        if self.screen is not None:
             pygame.quit()
+            self.screen = None
 
     def convert_coordinates(self, value, option="position"):
         """This function converts coordinates in pymunk into pygame coordinates.
@@ -251,7 +255,7 @@ class WaterworldBase:
                 ssd.cdist(coord[None, :], np.array([[x, y]]))
                 <= radius * 2 + obstacle.radius
             ):
-                coord = self.np_random.random(2)
+                coord = self.np_random.random(2) * self.pixel_scale
 
         return coord
 
@@ -305,7 +309,7 @@ class WaterworldBase:
         """Draw all moving objects and obstacles in PyGame."""
         for obj_list in [self.pursuers, self.evaders, self.poisons, self.obstacles]:
             for obj in obj_list:
-                obj.draw(self.display, self.convert_coordinates)
+                obj.draw(self.screen, self.convert_coordinates)
 
     def add_handlers(self):
         # Collision handlers for pursuers v.s. evaders & poisons
@@ -446,8 +450,11 @@ class WaterworldBase:
         if is_last:
             self.space.step(1 / self.FPS)
 
+            obs_list = self.observe_list()
+            self.last_obs = obs_list
+
             for id in range(self.n_pursuers):
-                p = self.pursuers[agent_id]
+                p = self.pursuers[id]
 
                 # reward for food caught, encountered and poison
                 self.behavior_rewards[id] = (
@@ -457,13 +464,9 @@ class WaterworldBase:
                 )
 
                 p.shape.food_indicator = 0
-                p.shape.food_touched_indicator = 0
                 p.shape.poison_indicator = 0
 
             rewards = np.array(self.behavior_rewards) + np.array(self.control_rewards)
-
-            obs_list = self.observe_list()
-            self.last_obs = obs_list
 
             local_reward = rewards
             global_reward = local_reward.mean()
@@ -545,30 +548,36 @@ class WaterworldBase:
                 velocites=poison_velocities,
             )
 
-            for j, _pursuer in enumerate(self.pursuers):
-                # Get sensor readings only for other pursuers
-                if i == j:
-                    continue
+            # When there is only one pursuer the sensors will not sense
+            # another pursuer
+            if self.n_pursuers > 1:
+                for j, _pursuer in enumerate(self.pursuers):
+                    # Get sensor readings only for other pursuers
+                    if i == j:
+                        continue
 
-                _pursuer_distance, _pursuer_velocity = pursuer.get_sensor_reading(
-                    _pursuer.body.position,
-                    _pursuer.radius,
-                    _pursuer.body.velocity,
-                    self.pursuer_speed,
+                    _pursuer_distance, _pursuer_velocity = pursuer.get_sensor_reading(
+                        _pursuer.body.position,
+                        _pursuer.radius,
+                        _pursuer.body.velocity,
+                        self.pursuer_speed,
+                    )
+                    _pursuer_distances.append(_pursuer_distance)
+                    _pursuer_velocities.append(_pursuer_velocity)
+
+                (
+                    _pursuer_sensor_distance_vals,
+                    _pursuer_sensor_velocity_vals,
+                ) = self.get_sensor_readings(
+                    _pursuer_distances,
+                    pursuer.sensor_range,
+                    velocites=_pursuer_velocities,
                 )
-                _pursuer_distances.append(_pursuer_distance)
-                _pursuer_velocities.append(_pursuer_velocity)
+            else:
+                _pursuer_sensor_distance_vals = np.zeros(self.n_sensors)
+                _pursuer_sensor_velocity_vals = np.zeros(self.n_sensors)
 
-            (
-                _pursuer_sensor_distance_vals,
-                _pursuer_sensor_velocity_vals,
-            ) = self.get_sensor_readings(
-                _pursuer_distances,
-                pursuer.sensor_range,
-                velocites=_pursuer_velocities,
-            )
-
-            if pursuer.shape.food_indicator >= 1:
+            if pursuer.shape.food_touched_indicator >= 1:
                 food_obs = 1
             else:
                 food_obs = 0
@@ -667,7 +676,7 @@ class WaterworldBase:
         evader_shape.counter += 1
 
         # Indicate that food is touched by pursuer
-        pursuer_shape.food_touched_indicator = 1
+        pursuer_shape.food_touched_indicator += 1
 
         if evader_shape.counter >= self.n_coop:
             # For giving reward to pursuer
@@ -700,33 +709,34 @@ class WaterworldBase:
             evader_shape.reset_position(x, y)
             evader_shape.reset_velocity(vx, vy)
 
+        pursuer_shape.food_touched_indicator -= 1
+
     def return_false_begin_callback(self, arbiter, space, data):
         """Callback function that simply returns False."""
         return False
 
     def render(self):
         if self.render_mode is None:
-            gymnasium.logger.WARN(
+            gymnasium.logger.warn(
                 "You are calling render method without specifying any render mode."
             )
             return
 
-        if not self.renderOn:
+        if self.screen is None:
             if self.render_mode == "human":
                 pygame.init()
-                self.display = pygame.display.set_mode(
+                self.screen = pygame.display.set_mode(
                     (self.pixel_scale, self.pixel_scale)
                 )
+                pygame.display.set_caption("Waterworld")
             else:
-                self.display = pygame.Surface((self.pixel_scale, self.pixel_scale))
+                self.screen = pygame.Surface((self.pixel_scale, self.pixel_scale))
 
-            self.renderOn = True
-
-        self.display.fill((255, 255, 255))
+        self.screen.fill((255, 255, 255))
         self.draw()
         self.clock.tick(self.FPS)
 
-        observation = pygame.surfarray.pixels3d(self.display)
+        observation = pygame.surfarray.pixels3d(self.screen)
         new_observation = np.copy(observation)
         del observation
 

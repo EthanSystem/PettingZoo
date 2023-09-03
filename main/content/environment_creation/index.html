@@ -1,5 +1,5 @@
 <!doctype html>
-<html class="no-js" lang="en">
+<html class="no-js" lang="en" data-content_root="../../">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark">
@@ -11,11 +11,11 @@
 <link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Testing Environments" href="../environment_tests/" /><link rel="prev" title="Basic Usage" href="../basic_usage/" />
         <link rel="canonical" href="https://pettingzoo.farama.org/content/environment_creation.html" />
 
-    <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 7.1.2 and Furo 2023.05.20.dev1 -->
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.5 and Furo 2023.08.19.dev1 -->
         <title>Environment Creation - PettingZoo Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=2b6f8eb5452c44539a42dd9ada0a48f56e5f404d" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=5d0deb98f4b2e6cecaee64745957f1068f205919" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=3e7f4c72" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=49cbaffd" />
     
     
 
@@ -281,6 +281,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../environments/mpe/simple_adversary/">Simple Adversary</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../environments/mpe/simple_crypto/">Simple Crypto</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../environments/mpe/simple_push/">Simple Push</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mpe/simple_reference/">Simple Reference</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../environments/mpe/simple_speaker_listener/">Simple Speaker Listener</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../environments/mpe/simple_spread/">Simple Spread</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../environments/mpe/simple_tag/">Simple Tag</a></li>
@@ -297,11 +298,11 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../tutorials/environmentcreation/">Environment Creation Tutorial</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Environment Creation Tutorial</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../tutorials/environmentcreation/1-project-structure/">Tutorial: Repository Structure</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../tutorials/environmentcreation/2-environment-logic/">Tutorial: Environment Logic</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../tutorials/environmentcreation/3-action-masking/">Tutorial: Action Masking</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../tutorials/environmentcreation/4-testing-your-environment/">Tutorial: Testing Your Environment</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../tutorials/custom_environment/">Custom Environment Tutorial</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Custom Environment Tutorial</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/custom_environment/1-project-structure/">Tutorial: Repository Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/custom_environment/2-environment-logic/">Tutorial: Environment Logic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/custom_environment/3-action-masking/">Tutorial: Action Masking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/custom_environment/4-testing-your-environment/">Tutorial: Testing Your Environment</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../tutorials/cleanrl/">CleanRL Tutorial</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of CleanRL Tutorial</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -393,10 +394,12 @@
           <article role="main">
             
             <section id="environment-creation">
-<h1>Environment Creation<a class="headerlink" href="#environment-creation" title="Permalink to this heading">#</a></h1>
+<h1>Environment Creation<a class="headerlink" href="#environment-creation" title="Link to this heading">#</a></h1>
 <p>This documentation overviews creating new environments and relevant useful wrappers, utilities and tests included in PettingZoo designed for the creation of new environments.</p>
+<p>We will walk through the creation of a simple Rock-Paper-Scissors environment, with example code for both <a class="reference internal" href="../../api/aec/"><span class="doc std std-doc">AEC</span></a> and <a class="reference internal" href="../../api/aec/"><span class="doc std std-doc">Parallel</span></a> environments.</p>
+<p>See our <a class="reference internal" href="../../tutorials/custom_environment/"><span class="doc std std-doc">Custom Environment Tutorial</span></a> for a full walkthrough on creating custom environments, including complex environment logic and illegal action masking.</p>
 <section id="example-custom-environment">
-<h2>Example Custom Environment<a class="headerlink" href="#example-custom-environment" title="Permalink to this heading">#</a></h2>
+<h2>Example Custom Environment<a class="headerlink" href="#example-custom-environment" title="Link to this heading">#</a></h2>
 <p>This is a carefully commented version of the PettingZoo rock paper scissors environment.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">functools</span>
 
@@ -626,9 +629,28 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>
 </pre></div>
 </div>
+<p>To interact with your custom AEC environment, use the following code:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">aec_rps</span>
+
+<span class="n">env</span> <span class="o">=</span> <span class="n">aec_rps</span><span class="o">.</span><span class="n">env</span><span class="p">(</span><span class="n">render_mode</span><span class="o">=</span><span class="s2">&quot;human&quot;</span><span class="p">)</span>
+<span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">agent</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">agent_iter</span><span class="p">():</span>
+    <span class="n">observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">termination</span><span class="p">,</span> <span class="n">truncation</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">last</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">termination</span> <span class="ow">or</span> <span class="n">truncation</span><span class="p">:</span>
+        <span class="n">action</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># this is where you would insert your policy</span>
+        <span class="n">action</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="p">(</span><span class="n">agent</span><span class="p">)</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+
+    <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+<span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
 </section>
 <section id="example-custom-parallel-environment">
-<h2>Example Custom Parallel Environment<a class="headerlink" href="#example-custom-parallel-environment" title="Permalink to this heading">#</a></h2>
+<h2>Example Custom Parallel Environment<a class="headerlink" href="#example-custom-parallel-environment" title="Link to this heading">#</a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">functools</span>
 
 <span class="kn">import</span> <span class="nn">gymnasium</span>
@@ -761,6 +783,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">num_moves</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">observations</span> <span class="o">=</span> <span class="p">{</span><span class="n">agent</span><span class="p">:</span> <span class="n">NONE</span> <span class="k">for</span> <span class="n">agent</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">}</span>
         <span class="n">infos</span> <span class="o">=</span> <span class="p">{</span><span class="n">agent</span><span class="p">:</span> <span class="p">{}</span> <span class="k">for</span> <span class="n">agent</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">observations</span>
 
         <span class="k">return</span> <span class="n">observations</span><span class="p">,</span> <span class="n">infos</span>
 
@@ -796,6 +819,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span> <span class="nb">int</span><span class="p">(</span><span class="n">actions</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">i</span><span class="p">]])</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">agents</span><span class="p">))</span>
         <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">observations</span>
 
         <span class="c1"># typically there won&#39;t be any information in the infos, but there must</span>
         <span class="c1"># still be an entry for each agent</span>
@@ -809,9 +833,23 @@
         <span class="k">return</span> <span class="n">observations</span><span class="p">,</span> <span class="n">rewards</span><span class="p">,</span> <span class="n">terminations</span><span class="p">,</span> <span class="n">truncations</span><span class="p">,</span> <span class="n">infos</span>
 </pre></div>
 </div>
+<p>To interact with your custom parallel environment, use the following code:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">parallel_rps</span>
+
+<span class="n">env</span> <span class="o">=</span> <span class="n">parallel_rps</span><span class="o">.</span><span class="n">parallel_env</span><span class="p">(</span><span class="n">render_mode</span><span class="o">=</span><span class="s2">&quot;human&quot;</span><span class="p">)</span>
+<span class="n">observations</span><span class="p">,</span> <span class="n">infos</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+<span class="k">while</span> <span class="n">env</span><span class="o">.</span><span class="n">agents</span><span class="p">:</span>
+    <span class="c1"># this is where you would insert your policy</span>
+    <span class="n">actions</span> <span class="o">=</span> <span class="p">{</span><span class="n">agent</span><span class="p">:</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="p">(</span><span class="n">agent</span><span class="p">)</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span> <span class="k">for</span> <span class="n">agent</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">agents</span><span class="p">}</span>
+
+    <span class="n">observations</span><span class="p">,</span> <span class="n">rewards</span><span class="p">,</span> <span class="n">terminations</span><span class="p">,</span> <span class="n">truncations</span><span class="p">,</span> <span class="n">infos</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span>
+<span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
 </section>
 <section id="using-wrappers">
-<h2>Using Wrappers<a class="headerlink" href="#using-wrappers" title="Permalink to this heading">#</a></h2>
+<h2>Using Wrappers<a class="headerlink" href="#using-wrappers" title="Link to this heading">#</a></h2>
 <p>A wrapper is an environment transformation that takes in an environment as input, and outputs a new environment that is similar to the input environment, but with some transformation or validation applied. PettingZoo provides <a class="reference internal" href="#/api/pz_wrappers"><span class="xref myst">wrappers to convert environments</span></a> back and forth between the AEC API and the Parallel API and a set of simple <a class="reference internal" href="#/api/pz_wrappers"><span class="xref myst">utility wrappers</span></a> which provide input validation and other convenient reusable logic. PettingZoo also includes <a class="reference internal" href="#/api/supersuit_wrappers"><span class="xref myst">wrappers</span></a> via the SuperSuit companion package (<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">supersuit</span></code>).</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pettingzoo.butterfly</span> <span class="kn">import</span> <span class="n">pistonball_v6</span>
 <span class="kn">from</span> <span class="nn">pettingzoo.utils</span> <span class="kn">import</span> <span class="n">ClipOutOfBoundsWrapper</span>
@@ -824,11 +862,11 @@
 </div>
 </section>
 <section id="developer-utils">
-<h2>Developer Utils<a class="headerlink" href="#developer-utils" title="Permalink to this heading">#</a></h2>
+<h2>Developer Utils<a class="headerlink" href="#developer-utils" title="Link to this heading">#</a></h2>
 <p>The utils directory contains a few functions which are helpful for debugging environments. These are documented in the API docs.</p>
 <p>The utils directory also contain some classes which are only helpful for developing new environments. These are documented below.</p>
 <section id="agent-selector">
-<h3>Agent selector<a class="headerlink" href="#agent-selector" title="Permalink to this heading">#</a></h3>
+<h3>Agent selector<a class="headerlink" href="#agent-selector" title="Link to this heading">#</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">agent_selector</span></code> class steps through agents in a cycle</p>
 <p>It can be used as follows to cycle through the list of agents:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pettingzoo.utils</span> <span class="kn">import</span> <span class="n">agent_selector</span>
@@ -843,7 +881,7 @@
 </div>
 </section>
 <section id="deprecated-module">
-<h3>Deprecated Module<a class="headerlink" href="#deprecated-module" title="Permalink to this heading">#</a></h3>
+<h3>Deprecated Module<a class="headerlink" href="#deprecated-module" title="Link to this heading">#</a></h3>
 <p>The DeprecatedModule is used in PettingZoo to help guide the user away from old obsolete environment versions and toward new ones. If you wish to create a similar versioning system, this may be helpful.</p>
 <p>For example, when the user tries to import the <code class="docutils literal notranslate"><span class="pre">knights_archers_zombies_v0</span></code> environment, they import the following variable (defined in <code class="docutils literal notranslate"><span class="pre">pettingzoo/butterfly/__init__.py</span></code>):</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pettingzoo.utils.deprecated_module</span> <span class="kn">import</span> <span class="n">DeprecatedModule</span>
@@ -1024,9 +1062,9 @@
         })()
       </script>
 
-    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=8e69bb10"></script>
+    <script src="../../_static/documentation_options.js?v=6ada4f11"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=7660844c"></script>
     
     <script>

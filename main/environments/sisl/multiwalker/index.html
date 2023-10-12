@@ -11,7 +11,7 @@
 <link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Pursuit" href="../pursuit/" /><link rel="prev" title="SISL" href="../" />
         <link rel="canonical" href="https://pettingzoo.farama.org/environments/sisl/multiwalker.html" />
 
-    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.5 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.08.19.dev1 -->
         <title>Multiwalker - PettingZoo Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
@@ -331,6 +331,11 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/sb3/connect_four/">SB3: Action Masked PPO for Connect Four</a></li>
 </ul>
 </li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../tutorials/agilerl/">AgileRL Tutorial</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of AgileRL Tutorial</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorials/agilerl/MADDPG/">AgileRL: Implementing MADDPG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorials/agilerl/MATD3/">AgileRL: Implementing MATD3</a></li>
+</ul>
+</li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Development</span></p>
 <ul>
@@ -549,7 +554,7 @@ observations have normally distributed signal noise controlled by <code class="d
 <section id="arguments">
 <h2>Arguments<a class="headerlink" href="#arguments" title="Link to this heading">#</a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">multiwalker_v9</span><span class="o">.</span><span class="n">env</span><span class="p">(</span><span class="n">n_walkers</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">position_noise</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span> <span class="n">angle_noise</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span> <span class="n">forward_reward</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">terminate_reward</span><span class="o">=-</span><span class="mf">100.0</span><span class="p">,</span> <span class="n">fall_reward</span><span class="o">=-</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">shared_reward</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-<span class="n">terminate_on_fall</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">remove_on_fall</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">terrain_legth</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">max_cycles</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
+<span class="n">terminate_on_fall</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">remove_on_fall</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">terrain_length</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">max_cycles</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">n_walkers</span></code>:  number of bipedal walker agents in environment</p>

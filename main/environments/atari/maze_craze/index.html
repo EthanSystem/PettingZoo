@@ -11,7 +11,7 @@
 <link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Othello" href="../othello/" /><link rel="prev" title="Mario Bros" href="../mario_bros/" />
         <link rel="canonical" href="https://pettingzoo.farama.org/environments/atari/maze_craze.html" />
 
-    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.5 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.08.19.dev1 -->
         <title>Maze Craze - PettingZoo Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
@@ -331,6 +331,11 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/sb3/connect_four/">SB3: Action Masked PPO for Connect Four</a></li>
 </ul>
 </li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../tutorials/agilerl/">AgileRL Tutorial</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of AgileRL Tutorial</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorials/agilerl/MADDPG/">AgileRL: Implementing MADDPG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorials/agilerl/MATD3/">AgileRL: Implementing MATD3</a></li>
+</ul>
+</li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Development</span></p>
 <ul>
@@ -444,7 +449,7 @@ create one wall at a time, when you create a new one, the old one disappears.</p
 <h2>Environment parameters<a class="headerlink" href="#environment-parameters" title="Link to this heading">#</a></h2>
 <p>Some environment parameters are common to all Atari environments and are described in the <a class="reference internal" href="../"><span class="doc std std-doc">base Atari documentation</span></a>.</p>
 <p>Parameters specific to Maze Craze are</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">maze_craze</span><span class="o">.</span><span class="n">env</span><span class="p">(</span><span class="n">game_version</span><span class="o">=</span><span class="s2">&quot;robbers&quot;</span><span class="p">,</span> <span class="n">visibilty_level</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">maze_craze_v3</span><span class="o">.</span><span class="n">env</span><span class="p">(</span><span class="n">game_version</span><span class="o">=</span><span class="s2">&quot;robbers&quot;</span><span class="p">,</span> <span class="n">visibilty_level</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">game_version</span></code>:  Possibilities are “robbers”, “race”, “capture”, corresponding to the 3 game versions described above</p>

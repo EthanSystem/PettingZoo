@@ -10,7 +10,7 @@
     <meta property="og:url" content="https://pettingzoo.farama.org/_modules/pettingzoo/sisl/waterworld/waterworld.html" /><meta name="twitter:card" content="summary_large_image"><link rel="index" title="Index" href="../../../../../genindex/" /><link rel="search" title="Search" href="../../../../../search/" />
         <link rel="canonical" href="https://pettingzoo.farama.org/_modules/pettingzoo/sisl/waterworld/waterworld.html" />
 
-    <link rel="shortcut icon" href="../../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.5 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.08.19.dev1 -->
         <title>pettingzoo.sisl.waterworld.waterworld - PettingZoo Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=3e7f4c72" />
@@ -330,6 +330,11 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../../../tutorials/sb3/connect_four/">SB3: Action Masked PPO for Connect Four</a></li>
 </ul>
 </li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../tutorials/agilerl/">AgileRL Tutorial</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of AgileRL Tutorial</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../tutorials/agilerl/MADDPG/">AgileRL: Implementing MADDPG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../tutorials/agilerl/MATD3/">AgileRL: Implementing MATD3</a></li>
+</ul>
+</li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Development</span></p>
 <ul>
@@ -468,7 +473,7 @@
 
 <span class="sd">``` python</span>
 <span class="sd">waterworld_v4.env(n_pursuers=5, n_evaders=5, n_poisons=10, n_coop=2, n_sensors=20,</span>
-<span class="sd">sensor_range=0.2,radius=0.015, obstacle_radius=0.2,</span>
+<span class="sd">sensor_range=0.2,radius=0.015, obstacle_radius=0.2, n_obstacles=1,</span>
 <span class="sd">obstacle_coord=[(0.5, 0.5)], pursuer_max_accel=0.01, evader_speed=0.01,</span>
 <span class="sd">poison_speed=0.01, poison_reward=-1.0, food_reward=10.0, encounter_reward=0.01,</span>
 <span class="sd">thrust_penalty=-0.5, local_ratio=1.0, speed_features=True, max_cycles=500)</span>

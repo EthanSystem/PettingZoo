@@ -49,8 +49,9 @@ def parallel_api_test(par_env: ParallelEnv, num_cycles=1000):
 
         assert isinstance(obs, dict)
         assert isinstance(infos, dict)
-        assert set(obs.keys()) == (set(par_env.agents))
-        assert set(infos.keys()) == (set(par_env.agents))
+        # Note: obs and info dicts must contain all AgentIDs, but can also have other additional keys (e.g., "common")
+        assert set(par_env.agents).issubset(set(obs.keys()))
+        assert set(par_env.agents).issubset(set(infos.keys()))
         terminated = {agent: False for agent in par_env.agents}
         truncated = {agent: False for agent in par_env.agents}
         live_agents = set(par_env.agents[:])
@@ -77,14 +78,13 @@ def parallel_api_test(par_env: ParallelEnv, num_cycles=1000):
             assert isinstance(truncated, dict)
             assert isinstance(info, dict)
 
-            agents_set = set(live_agents)
             keys = "observation reward terminated truncated info".split()
             vals = [obs, rew, terminated, truncated, info]
             for k, v in zip(keys, vals):
                 key_set = set(v.keys())
-                if key_set == agents_set:
+                if key_set == live_agents:
                     continue
-                if len(key_set) < len(agents_set):
+                if len(key_set) < len(live_agents):
                     warnings.warn(f"Live agent was not given {k}")
                 else:
                     warnings.warn(f"Agent was given {k} but was dead last turn")
@@ -96,11 +96,8 @@ def parallel_api_test(par_env: ParallelEnv, num_cycles=1000):
 
                 has_finished |= {
                     agent
-                    for agent, d in [
-                        (x[0], x[1] or y[1])
-                        for x, y in zip(terminated.items(), truncated.items())
-                    ]
-                    if d
+                    for agent in live_agents
+                    if terminated[agent] or truncated[agent]
                 }
                 if not par_env.agents and has_finished != set(par_env.possible_agents):
                     warnings.warn(
@@ -117,12 +114,10 @@ def parallel_api_test(par_env: ParallelEnv, num_cycles=1000):
                     agent
                 ), "action_space should return the exact same space object (not a copy) for an agent (ensures that action space seeding works as expected). Consider decorating your action_space(self, agent) method with @functools.lru_cache(maxsize=None)"
 
-            for agent, d in [
-                (x[0], x[1] or y[1])
-                for x, y in zip(terminated.items(), truncated.items())
-            ]:
-                if d:
-                    live_agents.remove(agent)
+            agents_to_remove = {
+                agent for agent in live_agents if terminated[agent] or truncated[agent]
+            }
+            live_agents -= agents_to_remove
 
             assert (
                 set(par_env.agents) == live_agents

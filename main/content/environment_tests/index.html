@@ -332,6 +332,7 @@
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../tutorials/agilerl/">AgileRL Tutorial</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of AgileRL Tutorial</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/agilerl/DQN/">AgileRL: Implementing DQN - Curriculum Learning and Self-play</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../tutorials/agilerl/MADDPG/">AgileRL: Implementing MADDPG</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../tutorials/agilerl/MATD3/">AgileRL: Implementing MATD3</a></li>
 </ul>
@@ -398,7 +399,7 @@
           </div>
           <article role="main">
             
-            <section id="testing-environments">
+            <section class="tex2jax_ignore mathjax_ignore" id="testing-environments">
 <h1>Testing Environments<a class="headerlink" href="#testing-environments" title="Link to this heading">#</a></h1>
 <p>PettingZoo has a number of compliance tests for environments through. If you are adding a new environment, we encourage you to run these tests on your own environment.</p>
 <section id="api-test">
@@ -468,10 +469,14 @@
 </pre></div>
 </div>
 <p>The render test method takes in an optional argument <code class="docutils literal notranslate"><span class="pre">custom_tests</span></code> that allows for additional tests in non-standard modes.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">custom_tests</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;svg&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">render_result</span><span class="p">:</span> <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">render_result</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pettingzoo.test</span> <span class="kn">import</span> <span class="n">render_test</span>
+<span class="kn">from</span> <span class="nn">pettingzoo.butterfly</span> <span class="kn">import</span> <span class="n">pistonball_v6</span>
+<span class="n">env_func</span> <span class="o">=</span> <span class="n">pistonball_v6</span><span class="o">.</span><span class="n">env</span>
+
+<span class="n">custom_tests</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;svg&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">render_result</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">render_result</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
 <span class="p">}</span>
-<span class="n">render_test</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">custom_tests</span><span class="o">=</span><span class="n">custom_tests</span><span class="p">)</span>
+<span class="n">render_test</span><span class="p">(</span><span class="n">env_func</span><span class="p">,</span> <span class="n">custom_tests</span><span class="o">=</span><span class="n">custom_tests</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -662,7 +667,7 @@
         })()
       </script>
 
-    <script src="../../_static/documentation_options.js?v=6ada4f11"></script>
+    <script src="../../_static/documentation_options.js?v=4b4b37dc"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=7660844c"></script>

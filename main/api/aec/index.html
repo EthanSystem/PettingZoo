@@ -332,6 +332,7 @@
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../tutorials/agilerl/">AgileRL Tutorial</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of AgileRL Tutorial</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/agilerl/DQN/">AgileRL: Implementing DQN - Curriculum Learning and Self-play</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../tutorials/agilerl/MADDPG/">AgileRL: Implementing MADDPG</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../tutorials/agilerl/MATD3/">AgileRL: Implementing MATD3</a></li>
 </ul>
@@ -398,7 +399,7 @@
           </div>
           <article role="main">
             
-            <section id="aec-api">
+            <section class="tex2jax_ignore mathjax_ignore" id="aec-api">
 <h1>AEC API<a class="headerlink" href="#aec-api" title="Link to this heading">#</a></h1>
 <p>By default, PettingZoo models games as <a class="reference external" href="https://arxiv.org/abs/2009.13051"><em>Agent Environment Cycle</em></a> (AEC) environments. This allows PettingZoo to represent any type of game multi-agent RL can consider.</p>
 <p>For more information, see <a class="reference internal" href="#about-aec">About AEC</a> or <a class="reference external" href="https://arxiv.org/pdf/2009.14471.pdf"><em>PettingZoo: A Standard API for Multi-Agent Reinforcement Learning</em></a>.</p>
@@ -644,7 +645,7 @@ the <cite>api_test</cite> documented in the Developer documentation on the websi
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pettingzoo.utils.env.AECEnv.render">
-<span class="sig-prename descclassname"><span class="pre">AECEnv.</span></span><span class="sig-name descname"><span class="pre">render</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">np.ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span></span></span><a class="reference internal" href="../../_modules/pettingzoo/utils/env/#AECEnv.render"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pettingzoo.utils.env.AECEnv.render" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">AECEnv.</span></span><span class="sig-name descname"><span class="pre">render</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span></span></span><a class="reference internal" href="../../_modules/pettingzoo/utils/env/#AECEnv.render"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pettingzoo.utils.env.AECEnv.render" title="Link to this definition">#</a></dt>
 <dd><p>Renders the environment as specified by self.render_mode.</p>
 <p>Render mode can be <cite>human</cite> to display a window.
 Other render modes in the default environments are <cite>‘rgb_array’</cite>
@@ -851,7 +852,7 @@ or any other resources that should be released.</p>
         })()
       </script>
 
-    <script src="../../_static/documentation_options.js?v=6ada4f11"></script>
+    <script src="../../_static/documentation_options.js?v=4b4b37dc"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=7660844c"></script>

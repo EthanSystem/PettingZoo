@@ -332,6 +332,7 @@
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../tutorials/agilerl/">AgileRL Tutorial</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of AgileRL Tutorial</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/agilerl/DQN/">AgileRL: Implementing DQN - Curriculum Learning and Self-play</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../tutorials/agilerl/MADDPG/">AgileRL: Implementing MADDPG</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../tutorials/agilerl/MATD3/">AgileRL: Implementing MATD3</a></li>
 </ul>
@@ -398,7 +399,7 @@
           </div>
           <article role="main">
             
-            <section id="atari">
+            <section class="tex2jax_ignore mathjax_ignore" id="atari">
 <h1>Atari<a class="headerlink" href="#atari" title="Link to this heading">#</a></h1>
 <div class="toctree-wrapper compound">
 </div>
@@ -704,7 +705,7 @@
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">#</a></h2>
 <p>The unique dependencies for this set of environments can be installed via:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>pettingzoo<span class="o">[</span>atari<span class="o">]</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;pettingzoo[atari]&#39;</span>
 </pre></div>
 </div>
 <p>Install ROMs using <a class="reference external" href="https://github.com/Farama-Foundation/AutoROM">AutoROM</a>, or specify the path to your Atari rom using the <code class="docutils literal notranslate"><span class="pre">rom_path</span></code> argument (see <a class="reference internal" href="#common-parameters">Common Parameters</a>).</p>
@@ -776,7 +777,10 @@
 <section id="common-parameters">
 <h2>Common Parameters<a class="headerlink" href="#common-parameters" title="Link to this heading">#</a></h2>
 <p>All the Atari environments have the following environment parameters:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">atari_game</span><span class="o">&gt;.</span><span class="n">env</span><span class="p">(</span><span class="n">obs_type</span><span class="o">=</span><span class="s1">&#39;rgb_image&#39;</span><span class="p">,</span> <span class="n">full_action_space</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_cycles</span><span class="o">=</span><span class="mi">100000</span><span class="p">,</span> <span class="n">auto_rom_install_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># using space invaders as an example, but replace with any atari game</span>
+<span class="kn">from</span> <span class="nn">pettingzoo.atari</span> <span class="kn">import</span> <span class="n">space_invaders_v2</span>
+
+<span class="n">space_invaders_v2</span><span class="o">.</span><span class="n">env</span><span class="p">(</span><span class="n">obs_type</span><span class="o">=</span><span class="s1">&#39;rgb_image&#39;</span><span class="p">,</span> <span class="n">full_action_space</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_cycles</span><span class="o">=</span><span class="mi">100000</span><span class="p">,</span> <span class="n">auto_rom_install_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">obs_type</span></code>:  There are three possible values for this parameter:</p>
@@ -984,7 +988,7 @@ installed at the default AutoROM path.</p>
         })()
       </script>
 
-    <script src="../../_static/documentation_options.js?v=6ada4f11"></script>
+    <script src="../../_static/documentation_options.js?v=4b4b37dc"></script>
     <script src="../../_static/doctools.js?v=888ff710"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=7660844c"></script>
